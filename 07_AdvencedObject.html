@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdvencedOvject</title>
+</head>
+<body>
+    
+    <h3># 개선된 객체 선언 방식</h3>
+
+    <div>Press F12</div>
+
+    <script>
+        // 원래 객체를 만들던 방식 key:value
+        const employee = {
+            firstName: 'Steven',
+            salary: 8000
+        };
+        console.log(employee);
+        // 개선된 객체 선언 방식 => 변수만 넣으면 알아서 key/value로 변환
+        const name = '보코블린';
+        const health = 100;
+        const print = function() {
+            console.log(`${this.name}/체력${this.health}`);
+        }; 
+
+        const bocoblin = {name, health, print};
+        console.log(bocoblin);
+        bocoblin.print();
+        
+        // 객체도 스프레드가 가능하다
+        const food = {
+            drink: '아메리카노',
+            snack: '도리토스'
+        };
+        
+        const food2 = {
+            drink: '아메리카노',
+            snack: '도리토스',
+            tea: '홍차'
+        };
+        // food 를 넣으면 food2랑 완전히 같아지지는 않고 스프레드(...)을 써야  food2와 food3가 같아진다.
+        // food를 분해해서 넣는 방식임
+        const food3 = {
+            ...food,
+            tea: '홍차'
+        };
+        console.log(food);
+        console.log(food2);
+        console.log(food3);
+    </script>
+
+</body>
+</html>
