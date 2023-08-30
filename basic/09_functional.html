@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <h3># 함수형 프로그래밍</h3>
+
+    <ul>
+        <li>순수 함수들을 조합하여 프로그램을 만드는 방식</li>
+        <li>함수가 1등 시민인 언어를 통해 함수형 프로그래밍을 실현할 수 있다
+            (1등 시민 : 변수처럼 사용될 수 있는 것)
+        </li>
+    </ul>
+
+    <h3># 함수형 프로그래밍에서 가장 중요하게 생각하는 원칙</h3>
+
+    <ul>
+        <li>불변성</li>
+        <li>순수 함수</li>
+        <li>고차 함수</li>
+    </ul>
+    <h3># 순수 함수(Pure Functions)</h3>
+    
+    <ul>
+        <li>            
+            한번에 하나의 일만 하는 함수 
+        </li>
+        <li>
+            최소한 하나 이상의 인수를 받고,
+            같은 값을 넣었을 때 항상 결과가 동일한 함수
+            (외부의 상태에 영향을 받지 않는 함수)            
+        </li>
+        <li>본인의 기능 외의 부수 효과가 없다(외부에 영향을 주우서도 안된다)</li>
+        <li>
+            순수 함수는 해당 함수에 전달되는 인수값만 제어하면 되기 때문에
+            테스트 하기 쉽다 (TDD에 매우 적합하다)
+        </li>
+    </ul>
+
+    <h3># 불변성 (immutable)</h3>
+
+    <ul>
+        <li>원본을 훼손하지 않으면서 원하는 새로운 인스턴스를 얻어내는 방식</li>
+        <li>
+            불변성을 유지하는 함수를 좀 더 선호한다.
+        (Java의 Data, Calender 클래스는 불변성이 없는 클래스이고,
+         Time 클래스는 불변성을 추가한 클래스이다)          
+        </li>
+        <li>
+            Javascript의 map, reduce등은 불변성이 유지된 기능이지만
+            reverse는 원본을 뒤집어 버리므로 불변성이 없는 기능이다.
+        </li>
+    </ul>
+
+    <h3># 고차 함수</h3>
+
+    <ul>
+        <li>다른 함수를 인자로 받아 활용하는 함수</li>
+        <li>
+            함수를 생성하여 반환하는 고차 함수를 사용하면
+            필요할 때 재활용 할 수 있는 함수를 만들 수 있다.
+        </li>
+        <li>
+            커링 : 어떤 연산을 수행하기 위해 필요한 값들 중 일부만 저장하고
+            나머지는 나중에 받아서 사용하는 기업
+        </li>        
+    </ul>
+
+    <h3># 재귀</h3>
+
+    <ul>
+        <li>
+            자바스크립트는 재귀 함수의 인자값으로 함수를 전달할 수 있기 때문에 
+            더 다양한 활용이 가능해진다
+        </li>
+        <li>재귀는 성능이 다소 떨어지지만 보기에는 깔끔하고 재미있다.</li>
+    </ul>
+    
+    <h3># 합성</h3>
+
+    <ul>
+        <li>여러 함수를 나란히 붙여서 사용하는 것</li>
+    </ul>
+    <script>
+        // 고차 함수의 예
+        const userMessage = userName => message => console.log(`${userName} -> ${message}`);
+        const chulsuMessage = userMessage('김철수');
+        chulsuMessage('안녕하세요');
+        chulsuMessage('반갑습니다');
+
+        // 재귀의 예
+        const countdown = (value, func) => {
+            func(value);
+            value > 0 ? countdown(value - 1, func) : null;
+        };
+
+        const personalInfo = {
+            type: 'person',
+            data: {
+                gender: 'male',
+                info: {
+                    id: 33,
+                    fullname: {
+                        first: 'Mike',
+                        last: 'Park'
+                    }
+                }
+            }
+        };
+
+        // 문자열을 전달 받으면 데이터를 꺼내도록 만들어보기
+        // `data.gender` -> 'male'
+        // 'data.info.id' -> 33
+        const deepPick = (fields, object={}) => {
+            const [first, ...remainFeilds] = fields.split('.'); 
+                
+            // Javascript는 0 또는 null도 거짓이라고 인식한다.
+            // 그 외의 모든 값은 참으로 인식
+            return remainFeilds.length ? 
+                deepPick(remainFeilds.join('.'), object[first]) : object[first];
+        };
+
+        countdown(20, value => console.log(`${value}번째 카운트 다운!`));
+
+        // 합성 함수의 예 (메서드 체이닝)
+        const timeTemplate = 'hh:mm:ss tt';
+        const clockTime = timeTemplate
+            .replace('hh', '03')
+            .replace('mm', '35')
+            .replace('ss', '40')
+            .replace('tt', 'am');
+
+        // 함수1 : 시간을 보고 am 또는 pm을 더해주는 기능만 하는 순수 함수
+        const appendAMPM = timeObj => ({
+            ...timeObj,
+            ampm: timeObj.hour >= 12 ? 'PM' : 'AM'
+        });
+
+        // 함수2 : 24시간 기준 시간을 12시간 기준 시간으로 바꿔주는 기능을 하는 순수 함수
+        const humanHours = timeObj => ({
+            ...timeObj,
+            hour : timeObj.hour > 12 ? timeObj.hour - 12 : timeObj.hour
+        });
+
+        const currentTime = {
+            hour: 15,
+            minute: 35,
+            second: 49,
+            date: 30
+        };
+        // 함수 사용 1단계 (시간을 12시간으로 변경한 결과물)
+        console.log(humanHours(currentTime));
+
+        // 함수 사용 2단계 (시간객체에 AMPM을 추가하고 12시간으로 변경한 결과물)
+        // 그냥 사용하기, 많아질수록 소괄호가 많아진다
+        console.log(humanHours(appendAMPM(currentTime)));
+
+        // 함수들을 합성해서 사용할 수 있는 함수
+        // 많아지더라도 함수를 나열하면 된다
+        const compose = (...fns) =>
+         arg => fns.reduce((composed, f) => f(composed), arg);
+
+        // reduce(어떻게 압축할것인가?, 처음에 사용할 값(인자값)) :
+        // 배열 내의 모든 결과를 하나로 압축한다
+        
+        // reduce의 콜백함수 callback(prevValue, currValue)를 통해 압축한다
+        // prevValue : 여태까지 일어났던 모든 reduce 과정의 결과물
+        // currValue : 이번에 합쳐질 배열 요소
+        const converted = compose(appendAMPM, humanHours)(currentTime);
+        console.log('converted', converted);
+
+        
+    </script>
+</body>
+</html>
